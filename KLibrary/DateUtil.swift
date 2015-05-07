@@ -8,36 +8,64 @@
 
 import Foundation
 
-public class DateUtil {
-    var calendar = NSCalendar.currentCalendar()
-    
-    public init() {
+extension NSDate {
+  public var components: NSDateComponents {
+    let flags = NSCalendarUnit.CalendarUnitYear | NSCalendarUnit.CalendarUnitMonth |
+      NSCalendarUnit.CalendarUnitDay | NSCalendarUnit.CalendarUnitHour |
+      NSCalendarUnit.CalendarUnitMinute | NSCalendarUnit.CalendarUnitSecond
+    return NSCalendar.currentCalendar().components(flags, fromDate: self)
+  }
+  
+  public var hour: Int {
+    let flags = NSCalendarUnit.CalendarUnitHour
+    let comps = NSCalendar.currentCalendar().components(flags, fromDate: self)
+    return comps.hour
+  }
+  
+  public var minute: Int {
+    let flags = NSCalendarUnit.CalendarUnitMinute
+    let comps = NSCalendar.currentCalendar().components(flags, fromDate: self)
+    return comps.minute
+  }
+  
+  public var simpleString: String {
+    let df = NSDateFormatter()
+    df.dateFormat = "yyyy/MM/dd HH:mm:ss"
+    return df.stringFromDate(self)
+  }
+  
+  public var mdhm: String {
+    let df = NSDateFormatter()
+    df.dateFormat = "MM/dd HH:mm"
+    return df.stringFromDate(self)
+  }
+  
+  public func roundToDay(before: Bool = true) -> NSDate {
+    let comps = self.components
+    if comps.hour == 0 && comps.minute == 0 && comps.second == 0 {
+      return self
     }
-    
-    public func truncateToDay(date: NSDate) -> NSDate? {
-        var flags = NSCalendarUnit.YearCalendarUnit |
-            NSCalendarUnit.MonthCalendarUnit | NSCalendarUnit.DayCalendarUnit
-        var comps = calendar.components(flags, fromDate: date)
-        return calendar.dateFromComponents(comps)
+    comps.hour = 0
+    comps.minute = 0
+    comps.second = 0
+    var roundedDate = NSCalendar.currentCalendar().dateFromComponents(comps)!
+    if !before {
+      roundedDate = roundedDate.dateByAddingTimeInterval(24 * 60 * 60)
     }
-    
-    public func getMinute(date:NSDate) -> Int {
-        var flags = NSCalendarUnit.MinuteCalendarUnit
-        var comps = calendar.components(flags, fromDate: date)
-        return comps.minute
+    return roundedDate
+  }
+  
+  public func roundToHour(before: Bool = true) -> NSDate {
+    let comps = self.components
+    if comps.minute == 0 && comps.second == 0 {
+      return self
     }
-    
-    public func getHour(date:NSDate) -> Int {
-        var flags = NSCalendarUnit.HourCalendarUnit
-        var comps = calendar.components(flags, fromDate: date)
-        return comps.hour
+    comps.minute = 0
+    comps.second = 0
+    var roundedDate = NSCalendar.currentCalendar().dateFromComponents(comps)!
+    if !before {
+      roundedDate = roundedDate.dateByAddingTimeInterval(60 * 60)
     }
-    
-    public func getTime(date:NSDate) -> NSDateComponents {
-        var flags = NSCalendarUnit.YearCalendarUnit | NSCalendarUnit.MonthCalendarUnit |
-            NSCalendarUnit.DayCalendarUnit | NSCalendarUnit.HourCalendarUnit |
-            NSCalendarUnit.MinuteCalendarUnit | NSCalendarUnit.SecondCalendarUnit
-        return calendar.components(flags, fromDate: date)
-    }
-    
+    return roundedDate
+  }
 }
