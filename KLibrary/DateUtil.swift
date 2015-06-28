@@ -34,6 +34,12 @@ extension NSDate {
     return df.stringFromDate(self)
   }
   
+  public var dateString: String {
+    let df = NSDateFormatter()
+    df.dateFormat = "yyyy/MM/dd"
+    return df.stringFromDate(self)
+  }
+  
   public var mdhm: String {
     let df = NSDateFormatter()
     df.dateFormat = "MM/dd HH:mm"
@@ -68,4 +74,7 @@ extension NSDate {
     }
     return roundedDate
   }
+}
+
+public class DateUtil {
 }
