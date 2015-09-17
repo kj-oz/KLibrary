@@ -46,6 +46,27 @@ extension NSDate {
     return df.stringFromDate(self)
   }
   
+  public var dateInt: Int {
+    let comps = components
+    return comps.year * 10000 + comps.month * 100 + comps.day
+  }
+  
+  public static func fromInt(dateInt: Int) -> NSDate? {
+    let comps = NSDateComponents()
+    comps.year = dateInt / 10000
+    let monthday = dateInt % 10000
+    comps.month = monthday / 100
+    comps.day = monthday % 100
+    
+    return NSCalendar.currentCalendar().dateFromComponents(comps)
+  }
+  
+  public static func addToDateInt(days: Int, toDate: Int) -> Int {
+    var date = NSDate.fromInt(toDate)
+    let result = date?.dateByAddingTimeInterval(Double(days) * 60.0 * 60 * 24)
+    return result!.dateInt
+  }
+
   public func roundToDay(before: Bool = true) -> NSDate {
     let comps = self.components
     if comps.hour == 0 && comps.minute == 0 && comps.second == 0 {
