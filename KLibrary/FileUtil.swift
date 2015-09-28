@@ -47,10 +47,12 @@ public class FileUtil {
     let fm = NSFileManager.defaultManager()
     let files = fm.contentsOfDirectoryAtPath(dir, error: nil)
     var fileName = ""
-    for file in files! {
-      fileName = (file as? String)!
-      if predicate(fileName: fileName) {
-        result.append(fileName)
+    if let files = files {
+      for file in files {
+        fileName = (file as? String)!
+        if predicate(fileName: fileName) {
+          result.append(fileName)
+        }
       }
     }
     return result

@@ -35,8 +35,18 @@ public class LogFile {
   
   /** ファイルの内容 */
   public var contents: String? {
-    if let contents = NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding, error: nil) {
-      return String(contents)
+    let files = listFiles()
+    
+    var contentList = [String]()
+    for file in files {
+      if let fileContent = NSString(contentsOfFile: path,
+          encoding: NSUTF8StringEncoding, error: nil) {
+        contentList.append(String(fileContent))
+      }
+    }
+    
+    if contentList.count > 0 {
+      return join("\n", contentList)
     } else {
       return nil
     }
