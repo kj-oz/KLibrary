@@ -39,14 +39,14 @@ public class LogFile {
     
     var contentList = [String]()
     for file in files {
-      if let fileContent = NSString(contentsOfFile: path,
+      if let fileContent = NSString(contentsOfFile: dir.stringByAppendingPathComponent(file),
           encoding: NSUTF8StringEncoding, error: nil) {
         contentList.append(String(fileContent))
       }
     }
     
     if contentList.count > 0 {
-      return join("\n", contentList)
+      return join("", contentList)
     } else {
       return nil
     }
@@ -178,10 +178,12 @@ public class LogFile {
     let files = listFiles()
     
     let fm = NSFileManager.defaultManager()
-    for i in 0 ..< files.count - maxBackups {
-      let fileName = files[i]
-      let path = dir.stringByAppendingPathComponent(fileName)
-      fm.removeItemAtPath(path, error: nil)
+    if files.count > maxBackups {
+      for i in 0 ..< files.count - maxBackups {
+        let fileName = files[i]
+        let path = dir.stringByAppendingPathComponent(fileName)
+        fm.removeItemAtPath(path, error: nil)
+      }
     }
     
     createFile(rotationDate)

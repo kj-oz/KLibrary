@@ -8,9 +8,19 @@
 
 import Foundation
 
+/**
+ * 文字列に関するユティリティ関数を集めたクラス
+ */
 public class StringUtil {
+  /** 都道府県の接尾句の文字集合 */
   public static let prefectureDivider = NSCharacterSet(charactersInString: "都道府県")
   
+  /**
+   * 先頭に都道府県のついた住所文字列から都道府県名を除外する
+   *
+   * :param: address 先頭に都道府県のついた住所文字列
+   * :returns: 都道府県を抜いた住所文字列
+   */
   public static func removePrefevtureFromAddress(address: String) -> String {
     let nsAddress = address as NSString
     let range = nsAddress.rangeOfCharacterFromSet(prefectureDivider)
