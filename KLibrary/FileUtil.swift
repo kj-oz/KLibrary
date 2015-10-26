@@ -35,7 +35,14 @@ public class FileUtil {
     return docDirs![0] as! String
   }
   
-  /** 
+  /** iOSアプリのサンドボックスのライブラリディレクトリ */
+  public class var libraryDir: String {
+    let libDirs = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.LibraryDirectory,
+      NSSearchPathDomainMask.UserDomainMask, true)
+    return libDirs![0] as! String
+  }
+  
+  /**
    * 指定のディレクトリ直下の条件に合致するファイルの一覧を得る
    *
    * :param: dir ディレクトリ
