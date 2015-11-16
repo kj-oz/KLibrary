@@ -91,13 +91,23 @@ extension NSDate {
   }
   
   /**
+   * 与えられた整数表現の日付の翌日の日付を得る
+   *
+   * :param: date 日付
+   * :returns: 次の日の日付
+   */
+  public static func tommorow(date: Int) -> Int {
+    return NSDate.addToDateInt(1, toDate: date)
+  }
+  
+  /**
    * ２つの年月日整数の差の日数を返す
    *
    * :param: date1 年月日整数1
    * :param: date2 年月日整数2
    * :returns: ２つの年月日整数の差(date1-date2）
    */
-  public static func dateIntDiff(date1: Int, date2: Int) -> Int {
+  public static func dateIntDiff(date1: Int, _ date2: Int) -> Int {
     let nsdate1 = NSDate.fromInt(date1)
     let nsdate2 = NSDate.fromInt(date2)
     let diff = nsdate1!.timeIntervalSinceDate(nsdate2!)
