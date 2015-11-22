@@ -14,22 +14,20 @@ import Foundation
 extension NSDate {
   /** 年から秒までの全ての要素の値 */
   public var components: NSDateComponents {
-    let flags = NSCalendarUnit.CalendarUnitYear | NSCalendarUnit.CalendarUnitMonth |
-      NSCalendarUnit.CalendarUnitDay | NSCalendarUnit.CalendarUnitHour |
-      NSCalendarUnit.CalendarUnitMinute | NSCalendarUnit.CalendarUnitSecond
+    let flags: NSCalendarUnit = [NSCalendarUnit.Year, NSCalendarUnit.Month, NSCalendarUnit.Day, NSCalendarUnit.Hour, NSCalendarUnit.Minute, NSCalendarUnit.Second]
     return NSCalendar.currentCalendar().components(flags, fromDate: self)
   }
   
   /** 時(整数) */
   public var hour: Int {
-    let flags = NSCalendarUnit.CalendarUnitHour
+    let flags = NSCalendarUnit.Hour
     let comps = NSCalendar.currentCalendar().components(flags, fromDate: self)
     return comps.hour
   }
   
   /** 分(整数) */
   public var minute: Int {
-    let flags = NSCalendarUnit.CalendarUnitMinute
+    let flags = NSCalendarUnit.Minute
     let comps = NSCalendar.currentCalendar().components(flags, fromDate: self)
     return comps.minute
   }
@@ -64,8 +62,8 @@ extension NSDate {
   /**
    * 年月日整数の表す日付のNSDateオブジェクトを得る
    *
-   * :param: dateInt 年月日整数
-   * :returns: NSDateオブジェクト
+   * - parameter dateInt: 年月日整数
+   * - returns: NSDateオブジェクト
    */
   public static func fromInt(dateInt: Int) -> NSDate? {
     let comps = NSDateComponents()
@@ -80,12 +78,12 @@ extension NSDate {
   /** 
    * 年月日整数に指定の日数を加えた年月日整数を返す
    *
-   * :param: days 加える日数
-   * :param: toDate 元の年月日整数
-   * :returns: 日数を加えた年月日整数
+   * - parameter days: 加える日数
+   * - parameter toDate: 元の年月日整数
+   * - returns: 日数を加えた年月日整数
    */
   public static func addToDateInt(days: Int, toDate: Int) -> Int {
-    var date = NSDate.fromInt(toDate)
+    let date = NSDate.fromInt(toDate)
     let result = date?.dateByAddingTimeInterval(Double(days) * 60.0 * 60 * 24)
     return result!.dateInt
   }
@@ -93,8 +91,8 @@ extension NSDate {
   /**
    * 与えられた整数表現の日付の翌日の日付を得る
    *
-   * :param: date 日付
-   * :returns: 次の日の日付
+   * - parameter date: 日付
+   * - returns: 次の日の日付
    */
   public static func tommorow(date: Int) -> Int {
     return NSDate.addToDateInt(1, toDate: date)
@@ -103,9 +101,9 @@ extension NSDate {
   /**
    * ２つの年月日整数の差の日数を返す
    *
-   * :param: date1 年月日整数1
-   * :param: date2 年月日整数2
-   * :returns: ２つの年月日整数の差(date1-date2）
+   * - parameter date1: 年月日整数1
+   * - parameter date2: 年月日整数2
+   * - returns: ２つの年月日整数の差(date1-date2）
    */
   public static func dateIntDiff(date1: Int, _ date2: Int) -> Int {
     let nsdate1 = NSDate.fromInt(date1)
@@ -117,10 +115,10 @@ extension NSDate {
   /**
    * ちょうど0時0分のNSDateオブジェクトを返す
    *
-   * :param: before 現在より前の0時0分かどか
-   * :returns: ちょうど0時0分のNSDateオブジェクト
+   * - parameter before: 現在より前の0時0分かどか
+   * - returns: ちょうど0時0分のNSDateオブジェクト
    */
-  public func roundToDay(before: Bool = true) -> NSDate {
+  public func roundToDay(before before: Bool = true) -> NSDate {
     let comps = self.components
     if comps.hour == 0 && comps.minute == 0 && comps.second == 0 {
       return self
@@ -138,8 +136,8 @@ extension NSDate {
   /**
    * ちょうど0分のNSDateオブジェクトを返す
    *
-   * :param: before 現在より前の0分かどか
-   * :returns: ちょうど0分のNSDateオブジェクト
+   * - parameter before: 現在より前の0分かどか
+   * - returns: ちょうど0分のNSDateオブジェクト
    */
   public func roundToHour(before: Bool = true) -> NSDate {
     let comps = self.components
