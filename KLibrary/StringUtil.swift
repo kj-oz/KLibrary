@@ -18,8 +18,8 @@ public class StringUtil {
   /**
    * 先頭に都道府県のついた住所文字列から都道府県名を除外する
    *
-   * :param: address 先頭に都道府県のついた住所文字列
-   * :returns: 都道府県を抜いた住所文字列
+   * - parameter address: 先頭に都道府県のついた住所文字列
+   * - returns: 都道府県を抜いた住所文字列
    */
   public static func removePrefevtureFromAddress(address: String) -> String {
     let nsAddress = address as NSString

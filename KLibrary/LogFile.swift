@@ -39,14 +39,14 @@ public class LogFile {
     
     var contentList = [String]()
     for file in files {
-      if let fileContent = NSString(contentsOfFile: dir.stringByAppendingPathComponent(file),
-          encoding: NSUTF8StringEncoding, error: nil) {
+      if let fileContent = try? NSString(contentsOfFile: (dir as NSString).stringByAppendingPathComponent(file),
+          encoding: NSUTF8StringEncoding) {
         contentList.append(String(fileContent))
       }
     }
     
     if contentList.count > 0 {
-      return join("", contentList)
+      return contentList.joinWithSeparator("")
     } else {
       return nil
     }
@@ -55,10 +55,10 @@ public class LogFile {
   /**
    * ログファイルのインスタンスを生成する
    *
-   * :param: dir ログを保存するディレクトリ
-   * :param: prefix ログファイル名の先頭につく固定文字列
-   * :param: rotationDays 何日でローテーションするか
-   * :param: maxBackups ローテション後のログファイルを何世代保存するか
+   * - parameter dir: ログを保存するディレクトリ
+   * - parameter prefix: ログファイル名の先頭につく固定文字列
+   * - parameter rotationDays: 何日でローテーションするか
+   * - parameter maxBackups: ローテション後のログファイルを何世代保存するか
    */
   public init(dir: String, prefix: String, rotationDays: Int, maxBackups: Int) {
     self.dir = dir
@@ -79,7 +79,7 @@ public class LogFile {
     }
     
     rotationDate = dateForRotation(startDay)
-    path = dir.stringByAppendingPathComponent(fileName)
+    path = (dir as NSString).stringByAppendingPathComponent(fileName)
     fileHandle = NSFileHandle(forWritingAtPath: path)
     if let fileHandle = fileHandle {
       fileHandle.seekToEndOfFile()
@@ -94,7 +94,7 @@ public class LogFile {
   /**
    * ログを記入する（与えれらた文字列の前に日時が挿入される）
    *
-   * :param: log ログ文字列
+   * - parameter log: ログ文字列
    */
   public func log(log: String) {
     let today = NSDate().dateInt
@@ -104,7 +104,7 @@ public class LogFile {
     if let fileHandle = fileHandle {
       let output = NSDate().simpleString + " " + log + "\n"
       let data = output.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-      print(output)
+      print(output, terminator: "")
       fileHandle.writeData(data!)
     }
   }
@@ -112,22 +112,22 @@ public class LogFile {
   /**
    * ファイル名から日付(整数）を得る
    *
-   * :param: fileName ファイル名
-   * :returns: 日付(整数）
+   * - parameter fileName: ファイル名
+   * - returns: 日付(整数）
    */
   private func extractDateFromFileName(fileName: String) -> Int {
-    return fileName.stringByDeletingPathExtension.substringFromIndex(
-      advance(fileName.startIndex, count(prefix))).toInt()!
+    return Int((fileName as NSString).stringByDeletingPathExtension.substringFromIndex(
+      fileName.startIndex.advancedBy(prefix.characters.count)))!
   }
   
   /**
    * 所定のディレクトリーの下のログファイルのリストを得る
    *
-   * :returns: ログファイル名の配列
+   * - returns: ログファイル名の配列
    */
   private func listFiles() -> [String] {
     return FileUtil.listFiles(dir, predicate: { fileName in
-      return fileName.pathExtension == "log" &&
+      return (fileName as NSString).pathExtension == "log" &&
         fileName.rangeOfString(self.prefix)?.startIndex == fileName.startIndex
     })
   }
@@ -135,12 +135,12 @@ public class LogFile {
   /**
    * ログファイルを作成する
    *
-   * :param: firstDate ログ開始日
-   * :returns: ファイル名
+   * - parameter firstDate: ログ開始日
+   * - returns: ファイル名
    */
   private func createFile(firstDate: Int) -> String {
     let fileName = "\(prefix)\(firstDate).log"
-    path = dir.stringByAppendingPathComponent(fileName)
+    path = (dir as NSString).stringByAppendingPathComponent(fileName)
     
     let fm = NSFileManager.defaultManager()
     fm.createFileAtPath(path, contents: nil, attributes: nil)
@@ -162,8 +162,8 @@ public class LogFile {
   /**
    * 次にローテーションを行う日付を得る
    *
-   * :param: firstDate ログ開始日
-   * :returns: 次にローテーションを行う日付(日付)
+   * - parameter firstDate: ログ開始日
+   * - returns: 次にローテーションを行う日付(日付)
    */
   private func dateForRotation(firstDate: Int) -> Int {
     return NSDate.fromInt(firstDate)!.dateByAddingTimeInterval(
@@ -181,8 +181,11 @@ public class LogFile {
     if files.count > maxBackups {
       for i in 0 ..< files.count - maxBackups {
         let fileName = files[i]
-        let path = dir.stringByAppendingPathComponent(fileName)
-        fm.removeItemAtPath(path, error: nil)
+        let path = (dir as NSString).stringByAppendingPathComponent(fileName)
+        do {
+          try fm.removeItemAtPath(path)
+        } catch _ {
+        }
       }
     }
     
